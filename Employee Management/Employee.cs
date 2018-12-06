@@ -42,7 +42,8 @@ namespace Employee_Management
         override
         public string ToString()
         {
-            return "id: " + Id + "    first：" + FirstName + "    lastName: " + LastName + "    gender: " + Gender + "    birth: " + Birth + "    address: " + Address + "    phone: " + Phone;
+            string result = string.Format("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}", Id, FirstName, LastName, Gender, Birth, Address, phone);
+            return result;
         }
     }
 }

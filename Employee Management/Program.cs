@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Employee_Management
@@ -10,42 +11,72 @@ namespace Employee_Management
     {
         public static Gender M { get; private set; }
 
-        static void Main(string[] args)
+        /// <summary>
+        /// 用户登录
+        /// </summary>
+        /// <returns></returns>
+        private static void Login()
         {
-            Console.WriteLine("欢迎登录Employee_Management\n查看所有Employee请按0\n添加Employee请按1\n删除Employee请按2\n修改Employee请按3\n退出请按#");
+            string username, password;
+            do
+            {
+                Console.WriteLine("请输入任意username和password:");
+                username = Console.ReadLine();
+                password = Console.ReadLine();
+            } while (username == null && password == null);
+            Console.WriteLine("欢迎登录" + username);
+        }
+
+        /// <summary>
+        /// 输出菜单
+        /// </summary>
+        private static void OutputMenu()
+        {
+            Console.WriteLine("查看所有Employee请按0\n添加Employee请按1\n删除Employee请按2\n修改Employee请按3\n退出请按#");
+        }
+
+        /// <summary>
+        /// 执行主要功能
+        /// </summary>
+        private static void Action()
+        {
             string key = Console.ReadLine();
             EmployeeController controller = new EmployeeController();
             while (!"#".Equals(key))
             {
-                if("0".Equals(key))
+                if ("0".Equals(key))    // 显示全部
                 {
                     controller.DisplayEmployees();
                 }
-                else if("1".Equals(key))
+                else if ("1".Equals(key))    // 添加
                 {
                     controller.AddEmployee();
                 }
-                else if("2".Equals(key))
+                else if ("2".Equals(key))    // 删除
                 {
                     controller.DisplayEmployees();
-                    Console.WriteLine("请输入需要删除的id:");
-                    int id = Int32.Parse(Console.ReadLine());
-                    controller.DeleteEmployee(id);
+                    controller.DeleteEmployee();
                 }
-                else if ("3".Equals(key))
+                else if ("3".Equals(key))    // 修改
                 {
                     controller.DisplayEmployees();
-                    Console.WriteLine("请输入需要更改的id");
-                    int id = Int32.Parse(Console.ReadLine());
-                    controller.UpdateEmployee(id);
-                }  
+                    controller.UpdateEmployee();
+                }
                 else
                 {
                     Console.WriteLine("请合法输入");
                 }
-                Console.WriteLine("查看所有Employee请按0\n添加Employee请按1\n删除Employee请按2\n修改Employee请按3\n退出请按#");
+                OutputMenu();
                 key = Console.ReadLine();
             }
+            Console.WriteLine("感谢使用, 再见");
+        }
+
+        static void Main(string[] args)
+        {
+            Login();
+            OutputMenu();
+            Action();
         }
     }
 }
