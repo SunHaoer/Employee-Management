@@ -59,6 +59,10 @@ namespace Employee_Management
             Console.WriteLine("add完成");
         }
 
+        /// <summary>
+        /// 获取合法id
+        /// </summary>
+        /// <returns></returns>
         private int InputEmployeeId()
         {
             int id;
@@ -105,6 +109,10 @@ namespace Employee_Management
             }
         }
 
+        /// <summary>
+        /// 输入字符串
+        /// </summary>
+        /// <returns></returns>
         private string InputString()
         {
             string input = Console.ReadLine();
@@ -167,7 +175,7 @@ namespace Employee_Management
             {
                 if(!isFirst)
                 {
-                    Console.WriteLine("输入不合法，请重新输入");
+                    Console.WriteLine("请输入范围内正整数");
                 }
                 isFirst = false;
                 input = Console.ReadLine();
@@ -198,7 +206,7 @@ namespace Employee_Management
             {
                 if(!isFirst)
                 {
-                    Console.WriteLine("输入不合法，请重新输入");
+                    Console.WriteLine("手机号为11位正整数，请重新输入");
                 }
                 isFirst = false;
                 input = Console.ReadLine();
@@ -212,7 +220,7 @@ namespace Employee_Management
         /// </summary>
         public void DeleteEmployee()
         {
-            Console.WriteLine("请输入需要删除的id：");
+            Console.WriteLine("请输入id：");
             int id = InputNumber(1, 5);
             if(!employeeIdExist[id])
             {
@@ -247,6 +255,32 @@ namespace Employee_Management
             DeleteEmployee();
             AddEmployee();
             Console.WriteLine("update完成");
+        }
+
+        /// <summary>
+        /// 显示单个Employee信息
+        /// </summary>
+        public void DisplayOneEmployee()
+        {
+            Console.WriteLine("请输入需要查看的id：");
+            int id = InputNumber(1, 5);
+            if (!employeeIdExist[id])
+            {
+                Console.WriteLine("抱歉，该id不存在");
+                DisplayOneEmployee();
+            }
+            else
+            {
+                for (int i = 0; i < employees.Count; i++)
+                {
+                    if (employees[i].Id == id)
+                    {
+                        Console.WriteLine(employees[i].ToString());
+                    }
+                }
+                employeeIdExist[id] = false;
+                Console.WriteLine("delete完成");
+            }
         }
     }
 }

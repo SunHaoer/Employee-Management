@@ -32,7 +32,7 @@ namespace Employee_Management
         /// </summary>
         private static void OutputMenu()
         {
-            Console.WriteLine("查看所有Employee请按0\n添加Employee请按1\n删除Employee请按2\n修改Employee请按3\n退出请按#");
+            Console.WriteLine("查看所有Employee请按0\n添加Employee请按1\n删除Employee请按2\n修改Employee请按3\n查看单个Employee请按4\n退出请按#");
         }
 
         /// <summary>
@@ -61,6 +61,10 @@ namespace Employee_Management
                 {
                     controller.DisplayEmployees();
                     controller.UpdateEmployee();
+                }
+                else if("4".Equals(key))    // 获取详细信息
+                {
+                    controller.DisplayOneEmployee();
                 }
                 else
                 {
