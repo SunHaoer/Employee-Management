@@ -8,7 +8,7 @@ namespace Employee_Management
 {
     class Employee
     {
-        private int id;
+        private int id; 
         private string firstName;
         private string lastName;
         private Gender gender;
@@ -16,24 +16,13 @@ namespace Employee_Management
         private string address;
         private long phone;
 
-        public int Id { get => id; set => id = value; }
-        public string FirstName { get => firstName; set => firstName = value; }
-        public string LastName { get => lastName; set => lastName = value; }
-        internal Gender Gender { get => gender; set => gender = value; }
-        public DateTime Birth { get => birth; set => birth = value; }
-        public string Address { get => address; set => address = value; }
-        public long Phone { get => phone; set => phone = value; }
-
-        public Employee(int id, string firstName, string lastName, Gender gender, DateTime birth, string address, long phone)
-        {
-            this.Id = id;
-            this.FirstName = firstName;
-            this.LastName = lastName;
-            this.Gender = gender;
-            this.Birth = birth;
-            this.Address = address;
-            this.Phone = phone;
-        }
+        public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        internal Gender Gender { get; set; }
+        public DateTime Birth { get; set; }
+        public string Address { get; set; }
+        public long Phone { get; set; }
 
         public Employee()
         {
