@@ -8,7 +8,7 @@ namespace Employee_Management
 {
     class Employee
     {
-        private int id; 
+        private int id;
         private string firstName;
         private string lastName;
         private Gender gender;
@@ -31,7 +31,7 @@ namespace Employee_Management
         override
         public string ToString()
         {
-            string result = string.Format("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}", Id, FirstName, LastName, Gender, Birth, Address, phone);
+            string result = string.Format("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}", Id, FirstName, LastName, Gender, Birth, Address, Phone);
             return result;
         }
     }

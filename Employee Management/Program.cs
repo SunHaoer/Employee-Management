@@ -9,8 +9,6 @@ namespace Employee_Management
 {
     class Program
     {
-        public static Gender M { get; private set; }
-
         /// <summary>
         /// 用户登录
         /// </summary>
@@ -54,12 +52,10 @@ namespace Employee_Management
                 }
                 else if ("2".Equals(key))    // 删除
                 {
-                    controller.DisplayEmployees();
                     controller.DeleteEmployee();
                 }
                 else if ("3".Equals(key))    // 修改
                 {
-                    controller.DisplayEmployees();
                     controller.UpdateEmployee();
                 }
                 else if("4".Equals(key))    // 获取详细信息

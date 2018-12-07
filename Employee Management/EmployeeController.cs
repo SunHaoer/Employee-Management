@@ -131,12 +131,12 @@ namespace Employee_Management
             {
                 if(!isFirst)
                 {
-                    Console.WriteLine("请输入F/M:");
+                    Console.WriteLine("请输入M/F:");
                 }
                 input = Console.ReadLine();
                 isFirst = false;
-            } while (!("F".Equals(input) || "M".Equals(input)));
-            if ("F".Equals(input))
+            } while (!("M".Equals(input) || "F".Equals(input)));
+            if ("M".Equals(input))
             {
                 return Gender.F;
             }
@@ -152,14 +152,49 @@ namespace Employee_Management
         /// <returns></returns>
         private DateTime InputBirth()
         {
-            Console.Write("请输入year:");
-            int year = InputNumber(1, 4);
-            Console.Write("请输入month:");
-            int month = InputNumber(1, 2);
-            Console.Write("请输入day:");
-            int day = InputNumber(1, 2);
+            int year, month, day;
+            bool isFirst = true;
+            do
+            {
+                if(!isFirst)
+                {
+                    Console.WriteLine("请检查日期, 并重新输入");
+                }
+                isFirst = false;
+                Console.Write("请输入year:");
+                year = InputNumber(1, 4);
+                Console.Write("请输入month:");
+                month = InputNumber(1, 2);
+                Console.Write("请输入day:");
+                day = InputNumber(1, 2);
+            } while (!JudgeDate(year, month, day));
             return new DateTime(year, month, day);
-            
+        }
+
+        /// <summary>
+        /// 判断日期是否合法
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <param name="day"></param>
+        /// <returns></returns>
+        private bool JudgeDate(int year, int month, int day)
+        {
+            int[,] yearDate = new int[2, 13] { { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }, { 0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 } };    // 平年和闰年的日历
+            int yearType = 0;    // 0表示平年
+            if((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0))
+            {
+                yearType = 1;    // 1表示闰年
+            }
+            if(month > 12)
+            {
+                return false;    // 月份不合法
+            }
+            if(day > yearDate[yearType, month])
+            {
+                return false;    // 日期不合法
+            }
+            return true;
         }
 
         /// <summary>
@@ -220,7 +255,8 @@ namespace Employee_Management
         /// </summary>
         public void DeleteEmployee()
         {
-            Console.WriteLine("请输入id：");
+            DisplayEmployees();
+            Console.WriteLine("请输入需要删除的id：");
             int id = InputNumber(1, 5);
             if(!employeeIdExist[id])
             {
@@ -251,6 +287,7 @@ namespace Employee_Management
         /// <param name="id"></param>
         public void UpdateEmployee()
         {
+            //DisplayEmployees();
             Console.WriteLine("先删除再添加");
             DeleteEmployee();
             AddEmployee();
