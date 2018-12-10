@@ -1,0 +1,7 @@
+C:\Users\dillon.sun\source\repos\Employee Management\bin\Debug\Employee Management.exe.config
+C:\Users\dillon.sun\source\repos\Employee Management\bin\Debug\Employee Management.exe
+C:\Users\dillon.sun\source\repos\Employee Management\bin\Debug\Employee Management.pdb
+C:\Users\dillon.sun\source\repos\Employee Management\obj\Debug\Employee_Management.csproj.CoreCompileInputs.cache
+C:\Users\dillon.sun\source\repos\Employee Management\obj\Debug\Employee Management.exe
+C:\Users\dillon.sun\source\repos\Employee Management\obj\Debug\Employee Management.pdb
+C:\Users\dillon.sun\source\repos\Employee Management\obj\Debug\Employee_Management.csprojAssemblyReference.cache

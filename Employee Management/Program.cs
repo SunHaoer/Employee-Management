@@ -39,7 +39,7 @@ namespace Employee_Management
         private static void Action()
         {
             string key = Console.ReadLine();
-            EmployeeController controller = new EmployeeController();
+            Manage controller = new Manage();
             while (!"#".Equals(key))
             {
                 if ("0".Equals(key))    // 显示全部

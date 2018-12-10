@@ -8,21 +8,13 @@ namespace Employee_Management
 {
     class Employee
     {
-        private int id;
-        private string firstName;
-        private string lastName;
-        private Gender gender;
-        private DateTime birth;
-        private string address;
-        private long phone;
-
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        internal Gender Gender { get; set; }
+        public Gender Gender { get; set; }
         public DateTime Birth { get; set; }
         public string Address { get; set; }
-        public long Phone { get; set; }
+        public string Phone { get; set; }
 
         public Employee()
         {
