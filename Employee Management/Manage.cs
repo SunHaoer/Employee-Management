@@ -14,10 +14,15 @@ namespace Employee_Management
         public bool[] employeeIdExist = new bool[MAX];    // 表示该employeeId是否存在
         public int maxId = 0;
 
+        public void DisplayEmployees()
+        {
+            DisplayEmployees(employees);
+        }
+
         /// <summary>
         /// display
         /// </summary>
-        public void DisplayEmployees()
+        public void DisplayEmployees(List<Employee> employees)
         {
             Console.WriteLine("当前employee数：" + employees.Count);
             foreach(Employee employee in employees)
@@ -35,9 +40,36 @@ namespace Employee_Management
             employee.Id = CreateEmployeeId();  
             Console.WriteLine("自动生成id为" + employee.Id);
             employee = InputInformation(employee);
-            employeeIdExist[employee.Id] = true;
-            employees.Add(employee);
-            Console.WriteLine("add完成");
+            if(Confirm(employee))
+            {
+                employeeIdExist[employee.Id] = true;
+                employees.Add(employee);
+                Console.WriteLine("add完成");
+            }
+            else
+            {
+                Console.WriteLine("add取消");
+            }
+        }
+
+        /// <summary>
+        /// 确认操作
+        /// </summary>
+        /// <param name="employee"></param>
+        /// <returns></returns>
+        private bool Confirm(Employee employee)
+        {
+            Console.WriteLine(employee);
+            Console.WriteLine("放弃操作请按q，否则任意按键继续");
+            string key = Console.ReadLine();
+            if("q".Equals(key) || "Q".Equals(key))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         /// <summary>
@@ -149,7 +181,7 @@ namespace Employee_Management
                 }
                 input = Console.ReadLine();
                 isLegal = Int32.TryParse(input, out num);
-                isLegal = (num >= minn && num <= maxn);
+                isLegal = isLegal && (num >= minn && num <= maxn);   
             } while (!isLegal);
             return num;
         }
@@ -215,7 +247,7 @@ namespace Employee_Management
         /// </summary>
         public void DeleteEmployee()
         {
-            DisplayEmployees();
+            DisplayEmployees(employees);
             Console.WriteLine("请输入需要删除的id：");
             int id = InputNumber(0, MAX);
             if(!employeeIdExist[id])
@@ -224,9 +256,18 @@ namespace Employee_Management
             }
             else
             {
-                employees.Remove(employees.Find(item => item.Id == id));
-                employeeIdExist[id] = false;
-                Console.WriteLine("delete完成");
+                Employee employee = employees.Find(item => item.Id == id);
+                if(Confirm(employee))
+                {
+                    employees.Remove(employee);
+                    employeeIdExist[id] = false;
+                    Console.WriteLine("delete完成");                    
+                }
+                else
+                {
+                    Console.WriteLine("delete取消");
+                }
+
             }
         }
 
@@ -236,7 +277,7 @@ namespace Employee_Management
         /// <param name="id"></param>
         public void UpdateEmployee()
         {
-            DisplayEmployees();
+            DisplayEmployees(employees);
             Console.WriteLine("请输入需要修改的id：");
             int id = InputNumber(0, MAX);
             if (!employeeIdExist[id])
@@ -246,8 +287,16 @@ namespace Employee_Management
             else
             {
                 Employee employee =  employees.Find(item => item.Id == id);
-                Console.WriteLine(employee);
-                employee = InputInformation(employee);
+                if(Confirm(employee))
+                {
+                    Console.WriteLine(employee);
+                    employee = InputInformation(employee);
+                    Console.WriteLine("update完成");
+                }
+                else
+                {
+                    Console.WriteLine("update取消");
+                }
             }
         }
 
@@ -256,24 +305,75 @@ namespace Employee_Management
         /// </summary>
         public void DisplayOneEmployee()
         {
-            Console.WriteLine("请输入需要查看的id：");
+            Console.WriteLine("根据id查找请按0\n根据FirstName查找请按1\n根据LastName查找请按2\n返回请按q");
+            string key = Console.ReadLine();
+            while (!"q".Equals(key))
+            {
+                switch (key)
+                {
+                    case "0": FindEmployeeById(); break;
+                    case "1": FindEmployeeByFirstName(); break;
+                    case "2": FindEmployeeByLastName(); break;
+                    default: Console.WriteLine("请合法输入"); break;
+                }
+                Console.WriteLine("根据id查找请按0\n根据FirstName查找请按1\n根据LastName查找请按2\n返回请按q");
+                key = Console.ReadLine();
+            }
+        }
+
+        /// <summary>
+        /// 根据id查
+        /// </summary>
+        private void FindEmployeeById()
+        {
+            DisplayEmployees(employees);
+            Console.WriteLine("请输入需要查找的id：");
             int id = InputNumber(0, MAX);
             if (!employeeIdExist[id])
             {
                 Console.WriteLine("抱歉，该id不存在");
-                DisplayOneEmployee();
             }
             else
             {
-                for (int i = 0; i < employees.Count; i++)
-                {
-                    if (employees[i].Id == id)
-                    {
-                        Console.WriteLine(employees[i].ToString());
-                    }
-                }
-                employeeIdExist[id] = false;
-                Console.WriteLine("delete完成");
+                Console.WriteLine(employees.Find(item => item.Id == id));
+            }
+        }
+
+        /// <summary>
+        /// 根据FirstName查employee
+        /// </summary>
+        public void FindEmployeeByFirstName()
+        {
+            DisplayEmployees(employees);
+            Console.WriteLine("请输入需要查找的FirstName");
+            string input = Console.ReadLine();
+            List<Employee> resultList = employees.FindAll(item => Regex.IsMatch(item.FirstName.ToLower(), input.ToLower()));
+            if(resultList.Count == 0)
+            {
+                Console.WriteLine("抱歉，找不到匹配");
+            }
+            else
+            {
+                DisplayEmployees(resultList);
+            }
+        }
+
+        /// <summary>
+        /// 根据LastName查employee
+        /// </summary>
+        public void FindEmployeeByLastName()
+        {
+            DisplayEmployees(employees);
+            Console.WriteLine("请输入需要查找的FirstName");
+            string input = Console.ReadLine();
+            List<Employee> resultList = employees.FindAll(item => Regex.IsMatch(item.LastName, input));
+            if (resultList.Count == 0)
+            {
+                Console.WriteLine("抱歉，找不到匹配");
+            }
+            else
+            {
+                DisplayEmployees(resultList);
             }
         }
     }

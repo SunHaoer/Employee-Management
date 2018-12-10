@@ -39,32 +39,17 @@ namespace Employee_Management
         private static void Action()
         {
             string key = Console.ReadLine();
-            Manage controller = new Manage();
-            while (!"#".Equals(key))
+            Manage manage = new Manage();
+            while (!"q".Equals(key))
             {
-                if ("0".Equals(key))    // 显示全部
+                switch (key)
                 {
-                    controller.DisplayEmployees();
-                }
-                else if ("1".Equals(key))    // 添加
-                {
-                    controller.AddEmployee();
-                }
-                else if ("2".Equals(key))    // 删除
-                {
-                    controller.DeleteEmployee();
-                }
-                else if ("3".Equals(key))    // 修改
-                {
-                    controller.UpdateEmployee();
-                }
-                else if("4".Equals(key))    // 获取详细信息
-                {
-                    controller.DisplayOneEmployee();
-                }
-                else
-                {
-                    Console.WriteLine("请合法输入");
+                    case "0": manage.DisplayEmployees(); break;
+                    case "1": manage.AddEmployee(); break;
+                    case "2": manage.DeleteEmployee(); break;
+                    case "3": manage.UpdateEmployee(); break;
+                    case "4": manage.DisplayOneEmployee(); break;
+                    default: Console.WriteLine("请合法输入"); break;
                 }
                 OutputMenu();
                 key = Console.ReadLine();
