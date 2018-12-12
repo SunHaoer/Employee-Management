@@ -16,9 +16,6 @@ namespace Employee_Management
         public string Address { get; set; }
         public string Phone { get; set; }
 
-        public Employee()
-        {
-        }
 
         override
         public string ToString()

@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Employee_Management
 {
@@ -30,16 +25,16 @@ namespace Employee_Management
         /// </summary>
         private static void OutputMenu()
         {
-            Console.WriteLine("查看所有Employee请按0\n添加Employee请按1\n删除Employee请按2\n修改Employee请按3\n查看单个Employee请按4\n退出请按#");
+            Console.WriteLine("查看所有Employee请按0\n添加Employee请按1\n删除Employee请按2\n修改Employee请按3\n查找Employee请按4\n退出请按#");
         }
 
         /// <summary>
         /// 执行主要功能
         /// </summary>
-        private static void Action()
+        private static void DoMenuFunction()
         {
             string key = Console.ReadLine();
-            Manage manage = new Manage();
+            EmployeeManage manage = new EmployeeManage();
             while (!"q".Equals(key))
             {
                 switch (key)
@@ -61,7 +56,7 @@ namespace Employee_Management
         {
             Login();
             OutputMenu();
-            Action();
+            DoMenuFunction();
         }
     }
 }
