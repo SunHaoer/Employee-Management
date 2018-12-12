@@ -67,7 +67,7 @@ namespace EmployeeManagementMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Gender,Birth,Address,Phone")] Employee employee)
+        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Gender,Birth,Address,Phone,Email,Department")] Employee employee)
         {
             if (ModelState.IsValid)
             {
@@ -99,7 +99,7 @@ namespace EmployeeManagementMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Gender,Birth,Address,Phone")] Employee employee)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Gender,Birth,Address,Phone,Email,Department")] Employee employee)
         {
             if (id != employee.ID)
             {

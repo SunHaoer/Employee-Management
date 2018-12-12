@@ -4,14 +4,16 @@ using EmployeeManagementMVC.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EmployeeManagementMVC.Migrations
 {
     [DbContext(typeof(EmployeeManagementMVCContext))]
-    partial class EmployeeManagementMVCContextModelSnapshot : ModelSnapshot
+    [Migration("20181212025026_Rating")]
+    partial class Rating
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,27 +27,20 @@ namespace EmployeeManagementMVC.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Address")
-                        .HasMaxLength(100);
+                    b.Property<string>("Address");
 
                     b.Property<DateTime>("Birth");
 
-                    b.Property<string>("Department")
-                        .HasMaxLength(30);
-
-                    b.Property<string>("Email");
+                    b.Property<string>("Department");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(30);
+                        .IsRequired();
 
                     b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasMaxLength(30);
+                        .IsRequired();
 
                     b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(30);
+                        .IsRequired();
 
                     b.Property<long>("Phone");
 
