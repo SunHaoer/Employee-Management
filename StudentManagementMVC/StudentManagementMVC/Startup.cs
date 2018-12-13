@@ -10,9 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using StudentManageMVC.Models;
+using StudentManagementMVC.Models;
 
-namespace StudentManageMVC
+namespace StudentManagementMVC
 {
     public class Startup
     {
@@ -36,8 +36,8 @@ namespace StudentManageMVC
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddDbContext<StudentManageMVCContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("StudentManageMVCContext")));
+            services.AddDbContext<StudentManagementMVCContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("StudentManagementMVCContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,7 +61,7 @@ namespace StudentManageMVC
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Students}/{action=Index}/{id?}");
             });
         }
     }

@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using StudentManageMVC.Models;
+using StudentManagementMVC.Models;
 
-namespace StudentManageMVC.Migrations
+namespace StudentManagementMVC.Migrations
 {
-    [DbContext(typeof(StudentManageMVCContext))]
-    partial class StudentManageMVCContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(StudentManagementMVCContext))]
+    [Migration("20181213023310_Phone")]
+    partial class Phone
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -18,13 +20,17 @@ namespace StudentManageMVC.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("StudentManageMVC.Models.Student", b =>
+            modelBuilder.Entity("StudentManagementMVC.Models.Student", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Nickname");
+
                     b.Property<string>("Password");
+
+                    b.Property<string>("Phone");
 
                     b.Property<string>("Username");
 

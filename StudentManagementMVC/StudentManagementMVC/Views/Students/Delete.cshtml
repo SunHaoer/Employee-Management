@@ -1,4 +1,4 @@
-﻿@model StudentManageMVC.Models.Student
+﻿@model StudentManagementMVC.Models.Student
 
 @{
     ViewData["Title"] = "Delete";
@@ -22,6 +22,18 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Password)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Nickname)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Nickname)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Phone)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Phone)
         </dd>
     </dl>
     

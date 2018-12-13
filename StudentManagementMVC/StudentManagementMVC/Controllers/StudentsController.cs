@@ -5,23 +5,49 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using StudentManageMVC.Models;
+using StudentManagementMVC.Models;
 
-namespace StudentManageMVC.Controllers
+namespace StudentManagementMVC.Controllers
 {
     public class StudentsController : Controller
     {
-        private readonly StudentManageMVCContext _context;
+        private readonly StudentManagementMVCContext _context;
 
-        public StudentsController(StudentManageMVCContext context)
+        public StudentsController(StudentManagementMVCContext context)
         {
             _context = context;
         }
 
         // GET: Students
-        public async Task<IActionResult> Index(string username, string password)
+        public IActionResult Index(string Username, string Password)
         {
-            return View(await _context.Student.ToListAsync());
+            /*
+            var employee = from m in _context.Student
+                           select m;
+            */
+            //System.Diagnostics.Debug.WriteLine("第一个进入\n");
+            List<Student> stuList = _context.Student.ToList();
+            Student isLegal = stuList.Find(item => item.Username.Equals(Username) && item.Password.Equals(Password));
+            if (isLegal != null)
+            {
+                //System.Diagnostics.Debug.WriteLine("!=null\n");
+                var student = from m in _context.Student
+                               select m;
+                return View("Display", student);
+            }
+            else
+            {
+                //System.Diagnostics.Debug.WriteLine("==null\n");
+                return View();
+            }
+        }
+
+        public async Task<IActionResult> Display(string Id, string FirstName, string LastName)
+        {
+            var employee = from m in _context.Student
+                           select m;
+            System.Diagnostics.Debug.WriteLine("进来了\n");
+            return View(await employee.ToListAsync());
         }
 
         // GET: Students/Details/5
@@ -53,7 +79,7 @@ namespace StudentManageMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Username,Password")] Student student)
+        public async Task<IActionResult> Create([Bind("Id,Username,Password,Nickname,phone")] Student student)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +111,7 @@ namespace StudentManageMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Password")] Student student)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Password,Nickname,phone")] Student student)
         {
             if (id != student.Id)
             {
