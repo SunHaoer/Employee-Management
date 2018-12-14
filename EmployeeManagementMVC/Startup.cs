@@ -49,6 +49,7 @@ namespace EmployeeManagementMVC
             }
             else
             {
+                
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
@@ -61,7 +62,7 @@ namespace EmployeeManagementMVC
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Employees}/{action=Index}/{id?}");
             });
         }
     }

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeManagementMVC.Models;
 
@@ -19,23 +17,35 @@ namespace EmployeeManagementMVC.Controllers
         }
 
         // GET: Employees
-        public async Task<IActionResult> Index(string Id, string FirstName, string LastName)
+        public async Task<IActionResult> Index(string searchString, string orderBy)
         {
+            /*
             var employee = from m in _context.Employee
                          select m;
-            if (!String.IsNullOrEmpty(Id))
+            */
+            IQueryable<Employee> employee = _context.Employee;
+            IQueryable<Employee> result = employee;
+            // 查询
+            if (!String.IsNullOrEmpty(searchString))
             {
-                employee = employee.Where(s => s.ID.ToString().Equals(Id.Trim()));
+                searchString = searchString.Trim();
+                result = employee.Where(s => s.Id.ToString().Equals(searchString) || s.FirstName.Contains(searchString) || s.LastName.Contains(searchString));
             }
-            if(!String.IsNullOrEmpty(FirstName))
+            // 排序
+            if(!String.IsNullOrEmpty(orderBy))
             {
-                employee = employee.Where(s => s.FirstName.Contains(FirstName.Trim()));
+                switch (orderBy)
+                {
+                    case "Id": result = result.OrderBy(item => item.Id); break;
+                    case "FirstName": result = result.OrderBy(item => item.FirstName); break;
+                    case "LastName": result = result.OrderBy(item => item.LastName); break;
+                }
             }
-            if (!String.IsNullOrEmpty(LastName))
-            {
-                employee = employee.Where(s => s.LastName.Contains(LastName.Trim()));
-            }
-            return View(await employee.ToListAsync());
+            // 分页
+            int pageSize = 3;
+            result = result.Skip(0).Take(pageSize);
+            //result.AsNoTracking();
+            return View(await result.ToListAsync());
         }
 
         // GET: Employees/Details/5
@@ -47,7 +57,7 @@ namespace EmployeeManagementMVC.Controllers
             }
 
             var employee = await _context.Employee
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (employee == null)
             {
                 return NotFound();
@@ -101,7 +111,7 @@ namespace EmployeeManagementMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Gender,Birth,Address,Phone,Email,Department")] Employee employee)
         {
-            if (id != employee.ID)
+            if (id != employee.Id)
             {
                 return NotFound();
             }
@@ -115,7 +125,7 @@ namespace EmployeeManagementMVC.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployeeExists(employee.ID))
+                    if (!EmployeeExists(employee.Id))
                     {
                         return NotFound();
                     }
@@ -138,7 +148,7 @@ namespace EmployeeManagementMVC.Controllers
             }
 
             var employee = await _context.Employee
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (employee == null)
             {
                 return NotFound();
@@ -160,7 +170,7 @@ namespace EmployeeManagementMVC.Controllers
 
         private bool EmployeeExists(int id)
         {
-            return _context.Employee.Any(e => e.ID == id);
+            return _context.Employee.Any(e => e.Id == id);
         }
     }
 }

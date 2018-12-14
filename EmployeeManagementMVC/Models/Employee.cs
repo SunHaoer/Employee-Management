@@ -5,7 +5,7 @@ namespace EmployeeManagementMVC.Models
 {
     public class Employee
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
 
         [StringLength(30)]
         [Required]
