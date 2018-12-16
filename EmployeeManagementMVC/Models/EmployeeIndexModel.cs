@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EmployeeManagementMVC.utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,8 @@ namespace EmployeeManagementMVC.Models
     {
         public int PageIndex { get; set; }
         public int PageSize { get; set; }
+        public string OrderBy { get; set; }
+        public string SearchString { get; set; }
 
         private readonly EmployeeManagementMVCContext _context;
 
@@ -17,10 +20,10 @@ namespace EmployeeManagementMVC.Models
             _context = context;
         }
 
+        public PaginatedList<Employee> Employee { get; set; }
+
         public EmployeeIndexModel()
         {
         }
-
-        public List<Employee> EmployeeIQ;
     }
 }

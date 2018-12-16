@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EmployeeManagementMVC.Models;
+using EmployeeManagementMVC.utils;
 
 namespace EmployeeManagementMVC.Controllers
 {
@@ -17,7 +18,7 @@ namespace EmployeeManagementMVC.Controllers
         }
 
         // GET: Employees
-        public async Task<IActionResult> Index(string searchString, string orderBy)
+        public async Task<IActionResult> Index(string searchString, string orderBy, int? pageIndex)
         {
             /*
             var employee = from m in _context.Employee
@@ -42,10 +43,22 @@ namespace EmployeeManagementMVC.Controllers
                 }
             }
             // 分页
+            /*
             int pageSize = 3;
             result = result.Skip(0).Take(pageSize);
             //result.AsNoTracking();
-            return View(await result.ToListAsync());
+            */
+            
+            int pageSize = 2;
+            PaginatedList<Employee> paginatedList = await PaginatedList<Employee>.CreateAsync(
+                result.AsNoTracking(), pageIndex ?? 1, pageSize);
+            EmployeeIndexModel employeeIndexModel = new EmployeeIndexModel();
+            employeeIndexModel.Employee = paginatedList;
+            employeeIndexModel.PageIndex = pageIndex ?? 1;
+            employeeIndexModel.OrderBy = orderBy;
+            employeeIndexModel.SearchString = searchString;
+            
+            return View(employeeIndexModel);
         }
 
         // GET: Employees/Details/5

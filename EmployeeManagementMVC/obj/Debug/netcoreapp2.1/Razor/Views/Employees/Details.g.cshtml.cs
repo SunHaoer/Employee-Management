@@ -244,7 +244,7 @@ using EmployeeManagementMVC.Models;
             WriteLiteral("\r\n        </dd>\r\n    </dl>\r\n</div>\r\n<div>\r\n    ");
             EndContext();
             BeginContext(1735, 54, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "5e3782de332b4586abe377fef6bf578a", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "5e2eeb2140a94aa885e18bce8078c27d", async() => {
                 BeginContext(1781, 4, true);
                 WriteLiteral("Edit");
                 EndContext();
@@ -279,7 +279,7 @@ using EmployeeManagementMVC.Models;
             WriteLiteral(" |\r\n    ");
             EndContext();
             BeginContext(1797, 38, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "f6dfbe664df4474387523951b6d14555", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "8a7b1151ca904e4c8aac98d7c7e441ab", async() => {
                 BeginContext(1819, 12, true);
                 WriteLiteral("Back to List");
                 EndContext();

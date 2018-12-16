@@ -1,4 +1,4 @@
-﻿@model IEnumerable<EmployeeManagementMVC.Models.Employee>
+﻿@model EmployeeManagementMVC.Models.EmployeeIndexModel
 
 @{
     ViewData["Title"] = "Index";
@@ -12,7 +12,7 @@
 
 <form asp-controller="Employees" asp-action="Index">
     <p>
-        Id/FirstName/LastName: <input type="text" name="searchString">
+        Id/FirstName/LastName: <input type="text" name="searchString" value="@(Model.SearchString)">
         <input type="submit" value="Search" />
     </p>
 </form>
@@ -21,9 +21,9 @@
     <p>
         Id/FirstName/LastName:
         <select name="orderBy">
-            <option value="Id">Id</option>
+            <option value="Id" >Id</option>
             <option value="FirstName">FirstName</option>
-            <option value="LastName">LastName</option>
+            <option value="LastName" >LastName</option>
         </select>
         <input type="submit" value="OrderBy" />
     </p>
@@ -34,35 +34,35 @@
         <tr>
 
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
+                @Html.DisplayNameFor(model => model.Employee[0].FirstName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
+                @Html.DisplayNameFor(model => model.Employee[0].LastName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Gender)
+                @Html.DisplayNameFor(model => model.Employee[0].Gender)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Birth)
+                @Html.DisplayNameFor(model => model.Employee[0].Birth)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Address)
+                @Html.DisplayNameFor(model => model.Employee[0].Address)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Phone)
+                @Html.DisplayNameFor(model => model.Employee[0].Phone)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Email)
+                @Html.DisplayNameFor(model => model.Employee[0].Email)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Department)
+                @Html.DisplayNameFor(model => model.Employee[0].Department)
             </th>
 
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Employee)
         {
             <tr>
                 <td>
@@ -98,4 +98,24 @@
         }
     </tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.Employee.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.Employee.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+    asp-route-pageIndex="@(Model.PageIndex - 1)"
+    asp-route-orderBy="@(Model.OrderBy)"   
+    asp-route-searchString="@(Model.SearchString)"
+    class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+    asp-route-pageIndex="@(Model.PageIndex + 1)"
+    asp-route-orderBy="@(Model.OrderBy)"   
+    asp-route-searchString="@(Model.SearchString)"
+    class="btn btn-default @nextDisabled">
+    Next
+</a>
 
