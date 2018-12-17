@@ -1,0 +1,19 @@
+﻿@model IEnumerable<EmployeeManagementMVC.Models.Employee>
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h2>Index</h2>
+
+<form asp-controller="Employees" asp-action="Login">
+    <p>
+        Username(FirstName): <input type="text" name="username">
+    </p>
+    <p>
+        Password(LastName): <input type="password" name="password">
+    </p>
+    <p>
+        <input type="submit" value="Submit" />
+    </p>
+</form>

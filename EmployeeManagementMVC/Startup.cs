@@ -33,6 +33,16 @@ namespace EmployeeManagementMVC
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                // Set a short timeout for easy testing.
+                options.IdleTimeout = TimeSpan.FromSeconds(600);
+                options.Cookie.HttpOnly = true;
+            });
+
+
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -57,13 +67,22 @@ namespace EmployeeManagementMVC
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseSession();
 
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Employees}/{action=Index}/{id?}");
+                    template: "{controller=Employees}/{action=Login}");
             });
+            /*
+                        app.UseMvc(routes =>
+                        {
+                            routes.MapRoute(
+                                name: "default",
+                                template: "{controller=Employees}/{action=Index}/{id?}");
+                        });
+            */
         }
     }
 }

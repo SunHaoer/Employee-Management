@@ -7,25 +7,27 @@
 <h2>Index</h2>
 
 <p>
+    hi @(Model.Username)
+</p>
+
+<p>
+    <a asp-action="Logout">Logout</a>
+</p>
+
+<p>
     <a asp-action="Create">Create New</a>
 </p>
 
 <form asp-controller="Employees" asp-action="Index">
     <p>
         Id/FirstName/LastName: <input type="text" name="searchString" value="@(Model.SearchString)">
-        <input type="submit" value="Search" />
-    </p>
-</form>
-
-<form asp-controller="Employees" asp-action="Index">
-    <p>
         Id/FirstName/LastName:
-        <select name="orderBy">
-            <option value="Id" >Id</option>
+        <select asp-for="OrderBy">
+            <option value="Id">Id</option>
             <option value="FirstName">FirstName</option>
-            <option value="LastName" >LastName</option>
+            <option value="LastName">LastName</option>
         </select>
-        <input type="submit" value="OrderBy" />
+        <input type="submit" value="submit" />
     </p>
 </form>
 
@@ -34,35 +36,35 @@
         <tr>
 
             <th>
-                @Html.DisplayNameFor(model => model.Employee[0].FirstName)
+                @Html.DisplayNameFor(model => model.EmployeeList[0].FirstName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Employee[0].LastName)
+                @Html.DisplayNameFor(model => model.EmployeeList[0].LastName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Employee[0].Gender)
+                @Html.DisplayNameFor(model => model.EmployeeList[0].Gender)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Employee[0].Birth)
+                @Html.DisplayNameFor(model => model.EmployeeList[0].Birth)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Employee[0].Address)
+                @Html.DisplayNameFor(model => model.EmployeeList[0].Address)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Employee[0].Phone)
+                @Html.DisplayNameFor(model => model.EmployeeList[0].Phone)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Employee[0].Email)
+                @Html.DisplayNameFor(model => model.EmployeeList[0].Email)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Employee[0].Department)
+                @Html.DisplayNameFor(model => model.EmployeeList[0].Department)
             </th>
 
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Employee)
+        @foreach (var item in Model.EmployeeList)
         {
             <tr>
                 <td>
@@ -100,8 +102,8 @@
 </table>
 
 @{
-    var prevDisabled = !Model.Employee.HasPreviousPage ? "disabled" : "";
-    var nextDisabled = !Model.Employee.HasNextPage ? "disabled" : "";
+    var prevDisabled = !Model.EmployeeList.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.EmployeeList.HasNextPage ? "disabled" : "";
 }
 
 <a asp-action="Index"

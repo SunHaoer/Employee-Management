@@ -12,6 +12,8 @@ namespace EmployeeManagementMVC.Models
         public int PageSize { get; set; }
         public string OrderBy { get; set; }
         public string SearchString { get; set; }
+        public PaginatedList<Employee> EmployeeList { get; set; }
+        public string Username { get; set; }
 
         private readonly EmployeeManagementMVCContext _context;
 
@@ -20,10 +22,20 @@ namespace EmployeeManagementMVC.Models
             _context = context;
         }
 
-        public PaginatedList<Employee> Employee { get; set; }
-
         public EmployeeIndexModel()
         {
         }
+
+        public EmployeeIndexModel(string username, int PageIndex, int PageSize, string Order, string SearchString, PaginatedList<Employee> Employee) 
+        {
+            
+            this.Username = username;
+            this.PageIndex = PageIndex;
+            this.PageSize = PageSize;
+            this.OrderBy = Order;
+            this.SearchString = SearchString;
+            this.EmployeeList = Employee;
+        }
+
     }
 }
