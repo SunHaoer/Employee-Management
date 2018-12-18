@@ -21,12 +21,20 @@
 <form asp-controller="Employees" asp-action="Index">
     <p>
         Id/FirstName/LastName: <input type="text" name="searchString" value="@(Model.SearchString)">
-        Id/FirstName/LastName:
-        <select asp-for="OrderBy">
+        OrderBy:
+        <select asp-for="OrderByString" value="@(Model.OrderByString)">
             <option value="Id">Id</option>
             <option value="FirstName">FirstName</option>
             <option value="LastName">LastName</option>
+            <option value="Gender">Gender</option>
+            <option value="Birth">Birth</option>
+            <option value="Address">Address</option>
+            <option value="Phone">Phone</option>
+            <option value="Email">Email</option>
+            <option value="Department">Department</option>
         </select>
+        <input type="radio" name="sortType" value="positive" @(Model.SortType == "positive" ? "checked" : "") /> Positive
+        <input type="radio" name="sortType" value="reversed" @(Model.SortType == "reversed" ? "checked" : "") /> reversed
         <input type="submit" value="submit" />
     </p>
 </form>
@@ -34,7 +42,6 @@
 <table class="table">
     <thead>
         <tr>
-
             <th>
                 @Html.DisplayNameFor(model => model.EmployeeList[0].FirstName)
             </th>
@@ -85,9 +92,9 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Phone)
                 </td>
-                <th>
+                <td>
                     @Html.DisplayFor(modelItem => item.Email)
-                </th>
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Department)
                 </td>
@@ -101,22 +108,28 @@
     </tbody>
 </table>
 
+<p>
+    Now: @(Model.EmployeeList.PageIndex)    Total: @(Model.EmployeeList.TotalPages)
+</p>
+
 @{
     var prevDisabled = !Model.EmployeeList.HasPreviousPage ? "disabled" : "";
     var nextDisabled = !Model.EmployeeList.HasNextPage ? "disabled" : "";
 }
 
 <a asp-action="Index"
-    asp-route-pageIndex="@(Model.PageIndex - 1)"
-    asp-route-orderBy="@(Model.OrderBy)"   
+    asp-route-pageIndex="@(Model.EmployeeList.PageIndex - 1)"
+    asp-route-orderByString="@(Model.OrderByString)"   
     asp-route-searchString="@(Model.SearchString)"
+    asp-route-sortType="@(Model.SortType)"
     class="btn btn-default @prevDisabled">
     Previous
 </a>
 <a asp-action="Index"
-    asp-route-pageIndex="@(Model.PageIndex + 1)"
-    asp-route-orderBy="@(Model.OrderBy)"   
+    asp-route-pageIndex="@(Model.EmployeeList.PageIndex + 1)"
+    asp-route-orderByString="@(Model.OrderByString)"   
     asp-route-searchString="@(Model.SearchString)"
+    asp-route-sortType="@(Model.SortType)"
     class="btn btn-default @nextDisabled">
     Next
 </a>
