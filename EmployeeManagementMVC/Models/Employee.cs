@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace EmployeeManagementMVC.Models
 {
     public class Employee
     {
+        //[Remote(action: "Verify", controller: "Employees", AdditionalFields = "Id")]
         public int Id { get; set; }
-
+        
         [StringLength(30)]
         [Required]
         public string FirstName { set; get; }
@@ -30,6 +32,7 @@ namespace EmployeeManagementMVC.Models
         public long Phone { set; get; }
         
         [RegularExpression(@"^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$", ErrorMessage = "抱歉，请填写正确Email地址")]
+        [Remote(action: "Verify", controller: "Employees", AdditionalFields = nameof(Id) + "," + nameof(Email))]
         public string Email { set; get; }
 
         [StringLength(30)]

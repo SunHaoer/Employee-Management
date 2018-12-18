@@ -67,7 +67,7 @@ namespace EmployeeManagementMVC.Controllers
         /// <param name="pageIndex"></param>
         /// <returns></returns>
         // GET: Employees
-        public IActionResult Index(string searchString, string orderByString, int? pageIndex, string username, string sortType)
+        public async Task<IActionResult> Index(string searchString, string orderByString, int? pageIndex, string username, string sortType)
         {
             if (IsNotLogin())
             {
@@ -78,33 +78,35 @@ namespace EmployeeManagementMVC.Controllers
                 username = HttpContext.Session.GetString("loginUsername");
                 IQueryable<Employee> employeeIQ = _context.Employee;
                 // 查询
-                if (!String.IsNullOrEmpty(searchString))
+                if (!string.IsNullOrEmpty(searchString))
                 {
                     employeeIQ = SearchEmployee(employeeIQ, searchString.Trim());
                 }
                 // 排序
-                if (!String.IsNullOrEmpty(orderByString))
+                if (!string.IsNullOrEmpty(orderByString))
                 {
                     employeeIQ = OrderByEmployee(employeeIQ, orderByString);
                 }
+                /*
                 List<Employee> resultList = employeeIQ.ToList();
+                // 倒序
                 if ("reversed".Equals(sortType))
                 {
                     resultList.Reverse();
+                    //employeeIQ = employeeIQ.Reverse();
                 }
-
+                */
                 // 分页
                 int pageSize = 2;
+                /*
                 PaginatedList<Employee> paginatedList = PaginatedList<Employee>.Create(
                    resultList, pageIndex ?? 1, pageSize);
-
+                */
+                PaginatedList<Employee> paginatedList = await PaginatedList<Employee>.CreateAsync(employeeIQ, pageIndex ?? 1, pageSize);
                 EmployeeIndexModel employeeIndexModel = new EmployeeIndexModel(username, pageSize, orderByString, searchString, sortType, paginatedList);
                 return View(employeeIndexModel);
             }
-
         }
-
-
 
         /// <summary>
         /// 查看详细信息
@@ -172,7 +174,7 @@ namespace EmployeeManagementMVC.Controllers
             }
             else
             {
-                if (ModelState.IsValid && !IsEmailUsed(employee.Email))
+                if (ModelState.IsValid)
                 {
                     _context.Add(employee);
                     await _context.SaveChangesAsync();
@@ -316,6 +318,26 @@ namespace EmployeeManagementMVC.Controllers
             }
         }
 
+        /// <summary>
+        /// 远程校验邮箱
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        [AcceptVerbs("Get", "Post")]
+        public IActionResult Verify(int id, string email)
+        {
+            if (IsEmailExist(id, email))    // create时id为0
+            {
+                return Json($"Email {email} is already in use.");
+            }
+            return Json(true);
+        }
+
+        /// <summary>
+        /// 判断该employee是否存在
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         private bool EmployeeExists(int id)
         {
             return _context.Employee.Any(e => e.Id == id);
@@ -338,7 +360,7 @@ namespace EmployeeManagementMVC.Controllers
         /// <returns></returns>
         private IQueryable<Employee> SearchEmployee(IQueryable<Employee> employeeIQ, string searchString)
         {
-            return employeeIQ = employeeIQ.Where(item => item.Id.ToString().Equals(searchString) || item.FirstName.Contains(searchString) || item.LastName.Contains(searchString));
+            return employeeIQ.Where(item => item.Id.ToString().Equals(searchString) || item.FirstName.Contains(searchString) || item.LastName.Contains(searchString));
         }
 
         /// <summary>
@@ -351,6 +373,8 @@ namespace EmployeeManagementMVC.Controllers
         {
             switch (orderByString)
             {
+                // var sortExpression = item.id
+                // if desc orderbydesc asc orderbyasc 
                 case "Id": employeeIQ = employeeIQ.OrderBy(item => item.Id); break;
                 case "FirstName": employeeIQ = employeeIQ.OrderBy(item => item.FirstName).ThenBy(item => item.Id); break;
                 case "LastName": employeeIQ = employeeIQ.OrderBy(item => item.LastName).ThenBy(item => item.Id); break;
@@ -369,10 +393,10 @@ namespace EmployeeManagementMVC.Controllers
         /// </summary>
         /// <param name="email"></param>
         /// <returns></returns>
-        private bool IsEmailUsed(string email)
+        private bool IsEmailExist(int id, string email)
         {
             IQueryable<Employee> employeeIQ = _context.Employee;
-            return employeeIQ.Any(item => item.Email.Equals(email));
+            return employeeIQ.Any(item => item.Email.Equals(email) && !item.Id.Equals(id));
         }
     }
 }
