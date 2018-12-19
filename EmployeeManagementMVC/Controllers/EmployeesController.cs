@@ -10,6 +10,7 @@ using System.Configuration;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Protocols;
+using System.Linq.Expressions;
 
 namespace EmployeeManagementMVC.Controllers
 {
@@ -32,7 +33,7 @@ namespace EmployeeManagementMVC.Controllers
         /// <param name="pageIndex"></param>
         /// <returns></returns>
         // GET: Employees
-        public async Task<IActionResult> Index(string searchString, string orderByString, int? pageIndex, string username, string sortType)
+        public async Task<IActionResult> Index(string searchString, string orderByString, int? pageIndex, string username, string orderByType)
         {
             username = HttpContext.Session.GetString("loginUsername");
             IQueryable<Employee> employeeIQ = _context.Employee;
@@ -44,7 +45,7 @@ namespace EmployeeManagementMVC.Controllers
             // 排序
             if (!string.IsNullOrEmpty(orderByString))
             {
-                employeeIQ = OrderByEmployee(employeeIQ, orderByString);
+                employeeIQ = OrderByEmployee(employeeIQ, orderByString, orderByType);
             }
             /*
             List<Employee> resultList = employeeIQ.ToList();
@@ -56,12 +57,22 @@ namespace EmployeeManagementMVC.Controllers
             }
             */
             // 分页
-
+            /*
             int pageSize = Configuration.GetSection("Constant").GetValue<int>("PageSize");
             PaginatedList<Employee> paginatedList = await PaginatedList<Employee>.CreateAsync(employeeIQ, pageIndex ?? 1, pageSize);
             EmployeeIndexModel employeeIndexModel = new EmployeeIndexModel(username, pageSize, orderByString, searchString, sortType, paginatedList);
+            */
+            EmployeeIndexViewModel employeeIndexModel = await GetEmployeeIndexModelAsync(employeeIQ, pageIndex, username, orderByString, searchString, orderByType);
             return View(employeeIndexModel);
 
+        }
+
+        private async Task<EmployeeIndexViewModel> GetEmployeeIndexModelAsync(IQueryable<Employee> employeeIQ, int? pageIndex, string username, string orderByString, string searchString, string orderByType)
+        {
+            int pageSize = Configuration.GetSection("Constant").GetValue<int>("PageSize");
+            PaginatedList<Employee> paginatedList = await PaginatedList<Employee>.CreateAsync(employeeIQ, pageIndex ?? 1, pageSize);
+            EmployeeIndexViewModel employeeIndexModel = new EmployeeIndexViewModel(username, pageSize, orderByString, searchString, orderByType, paginatedList);
+            return employeeIndexModel;
         }
 
         /// <summary>
@@ -239,8 +250,6 @@ namespace EmployeeManagementMVC.Controllers
 
         }
 
-
-
         /// <summary>
         /// 判断该employee是否存在
         /// </summary>
@@ -277,25 +286,33 @@ namespace EmployeeManagementMVC.Controllers
         /// <param name="employeeIQ"></param>
         /// <param name="orderByString"></param>
         /// <returns></returns>
-        private IQueryable<Employee> OrderByEmployee(IQueryable<Employee> employeeIQ, string orderByString)
+        private IQueryable<Employee> OrderByEmployee(IQueryable<Employee> employeeIQ, string orderByString, string orderByType)
         {
+            Expression<Func<Employee, object>> sortExpression;
             switch (orderByString)
             {
                 // var sortExpression = item.id
                 // if desc orderbydesc asc orderbyasc 
-                case "Id": employeeIQ = employeeIQ.OrderBy(item => item.Id); break;
-                case "FirstName": employeeIQ = employeeIQ.OrderBy(item => item.FirstName).ThenBy(item => item.Id); break;
-                case "LastName": employeeIQ = employeeIQ.OrderBy(item => item.LastName).ThenBy(item => item.Id); break;
-                case "Gender": employeeIQ = employeeIQ.OrderBy(item => item.Gender).ThenBy(item => item.Id); break;
-                case "Birth": employeeIQ = employeeIQ.OrderBy(item => item.Birth).ThenBy(item => item.Id); break;
-                case "Address": employeeIQ = employeeIQ.OrderBy(item => item.Address).ThenBy(item => item.Id); break;
-                case "Phone": employeeIQ = employeeIQ.OrderBy(item => item.Phone).ThenBy(item => item.Id); break;
-                case "Email": employeeIQ = employeeIQ.OrderBy(item => item.Email).ThenBy(item => item.Id); break;
-                case "Department": employeeIQ = employeeIQ.OrderBy(item => item.Department).ThenBy(item => item.Id); break;
+                case "Id": sortExpression = item => item.Id;  break;
+                case "FirstName": sortExpression = item => item.FirstName; break;
+                case "LastName": sortExpression = item => item.LastName; break;
+                case "Gender": sortExpression = item => item.Gender; break;
+                case "Birth": sortExpression = item => item.Birth; break;
+                case "Address": sortExpression = item => item.Address; break;
+                case "Phone": sortExpression = item => item.Phone; break;
+                case "Email": sortExpression = item => item.Email; break;
+                case "Department": sortExpression = item => item.Department; break;
+                default: sortExpression = item => item.Id; break;
+            }
+            if("reversed".Equals(orderByType))
+            {
+                employeeIQ = employeeIQ.OrderByDescending(sortExpression);
+            }
+            else
+            {
+                employeeIQ = employeeIQ.OrderBy(sortExpression);
             }
             return employeeIQ;
         }
-
-
     }
 }
