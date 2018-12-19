@@ -1,28 +1,24 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using EmployeeManagementMVC.Models;
-using EmployeeManagementMVC.utils;
 using Microsoft.AspNetCore.Http;
-using System.Configuration;
-using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Protocols;
-using System.Linq.Expressions;
+using EmployeeManagementMVC.Service;
 
 namespace EmployeeManagementMVC.Controllers
 {
     public class EmployeesController : Controller
     {
         private readonly EmployeeManagementMVCContext _context;
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
+        private EmployeesService EmployeesService; 
 
         public EmployeesController(EmployeeManagementMVCContext context, IConfiguration configuration)
         {
             _context = context;
             Configuration = configuration;
+            EmployeesService = new EmployeesService(_context, Configuration);
         }
 
         /// <summary>
@@ -40,39 +36,15 @@ namespace EmployeeManagementMVC.Controllers
             // 查询
             if (!string.IsNullOrEmpty(searchString))
             {
-                employeeIQ = SearchEmployee(employeeIQ, searchString.Trim());
+                employeeIQ = EmployeesService.SearchEmployee(employeeIQ, searchString.Trim());
             }
             // 排序
             if (!string.IsNullOrEmpty(orderByString))
             {
-                employeeIQ = OrderByEmployee(employeeIQ, orderByString, orderByType);
+                employeeIQ = EmployeesService.OrderByEmployee(employeeIQ, orderByString, orderByType);
             }
-            /*
-            List<Employee> resultList = employeeIQ.ToList();
-            // 倒序
-            if ("reversed".Equals(sortType))
-            {
-                resultList.Reverse();
-                //employeeIQ = employeeIQ.Reverse();
-            }
-            */
-            // 分页
-            /*
-            int pageSize = Configuration.GetSection("Constant").GetValue<int>("PageSize");
-            PaginatedList<Employee> paginatedList = await PaginatedList<Employee>.CreateAsync(employeeIQ, pageIndex ?? 1, pageSize);
-            EmployeeIndexModel employeeIndexModel = new EmployeeIndexModel(username, pageSize, orderByString, searchString, sortType, paginatedList);
-            */
-            EmployeeIndexViewModel employeeIndexModel = await GetEmployeeIndexModelAsync(employeeIQ, pageIndex, username, orderByString, searchString, orderByType);
+            EmployeeIndexViewModel employeeIndexModel = await EmployeesService.GetEmployeeIndexModelAsync(employeeIQ, pageIndex, username, orderByString, searchString, orderByType);
             return View(employeeIndexModel);
-
-        }
-
-        private async Task<EmployeeIndexViewModel> GetEmployeeIndexModelAsync(IQueryable<Employee> employeeIQ, int? pageIndex, string username, string orderByString, string searchString, string orderByType)
-        {
-            int pageSize = Configuration.GetSection("Constant").GetValue<int>("PageSize");
-            PaginatedList<Employee> paginatedList = await PaginatedList<Employee>.CreateAsync(employeeIQ, pageIndex ?? 1, pageSize);
-            EmployeeIndexViewModel employeeIndexModel = new EmployeeIndexViewModel(username, pageSize, orderByString, searchString, orderByType, paginatedList);
-            return employeeIndexModel;
         }
 
         /// <summary>
@@ -87,14 +59,15 @@ namespace EmployeeManagementMVC.Controllers
             {
                 return NotFound();
             }
-
+            /*
             var employee = await _context.Employee
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(item => item.Id == id);
+            */
+            Employee employee = await EmployeesService.FindEmployeeByIdAsync(id);
             if (employee == null)
             {
                 return NotFound();
             }
-
             return View(employee);
         }
 
@@ -105,14 +78,7 @@ namespace EmployeeManagementMVC.Controllers
         // GET: Employees/Create
         public IActionResult Create()
         {
-            if (IsNotLogin())
-            {
-                return RedirectToAction("Login", "EmployeesLogin");
-            }
-            else
-            {
-                return View();
-            }
+            return View();
         }
 
         /// <summary>
@@ -129,8 +95,11 @@ namespace EmployeeManagementMVC.Controllers
         {
             if (ModelState.IsValid)
             {
+                /*
                 _context.Add(employee);
                 await _context.SaveChangesAsync();
+                */
+                await EmployeesService.AddEmployeeAsync(employee);
                 return RedirectToAction("Index");
             }
             return View(employee);
@@ -144,20 +113,19 @@ namespace EmployeeManagementMVC.Controllers
         // GET: Employees/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-
             if (id == null)
             {
                 return NotFound();
             }
-
+            /*
             var employee = await _context.Employee.FindAsync(id);
+            */
+            Employee employee = await EmployeesService.FindEmployeeByIdAsync(id);
             if (employee == null)
             {
                 return NotFound();
             }
             return View(employee);
-
-
         }
 
         /// <summary>
@@ -173,17 +141,15 @@ namespace EmployeeManagementMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Gender,Birth,Address,Phone,Email,Department")] Employee employee)
         {
-
-
             //int a = employee.Id;
             Employee tempEmployee = employee;
             if (id != employee.Id)
             {
                 return NotFound();
             }
-
             if (ModelState.IsValid)
             {
+                /*
                 try
                 {
                     _context.Update(employee);
@@ -191,7 +157,7 @@ namespace EmployeeManagementMVC.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployeeExists(employee.Id))
+                    if (!EmployeesService.EmployeeExists(employee.Id))
                     {
                         return NotFound();
                     }
@@ -200,10 +166,15 @@ namespace EmployeeManagementMVC.Controllers
                         throw;
                     }
                 }
+                */
+                bool isEmpoyeExist = await EmployeesService.EditEmployeeAsync(employee);
+                if (!isEmpoyeExist)
+                {
+                    return NotFound();
+                } 
                 return RedirectToAction("Index");
             }
             return View(employee);
-
         }
 
         /// <summary>
@@ -219,17 +190,16 @@ namespace EmployeeManagementMVC.Controllers
             {
                 return NotFound();
             }
-
+            /*
             var employee = await _context.Employee
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(item => item.Id == id);
+            */
+            Employee employee = await EmployeesService.FindEmployeeByIdAsync(id);
             if (employee == null)
             {
                 return NotFound();
             }
-
             return View(employee);
-
-
         }
 
         /// <summary>
@@ -242,77 +212,13 @@ namespace EmployeeManagementMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-
+            /*
             var employee = await _context.Employee.FindAsync(id);
             _context.Employee.Remove(employee);
             await _context.SaveChangesAsync();
+            */
+            await EmployeesService.DeleteEmployeeByIdAsync(id);
             return RedirectToAction("Index");
-
-        }
-
-        /// <summary>
-        /// 判断该employee是否存在
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        private bool EmployeeExists(int id)
-        {
-            return _context.Employee.Any(e => e.Id == id);
-        }
-
-        /// <summary>
-        /// 判断是否登录
-        /// </summary>
-        /// <returns></returns>
-        private bool IsNotLogin()
-        {
-            return String.IsNullOrEmpty(HttpContext.Session.GetString("loginUsername"));
-        }
-
-        /// <summary>
-        /// 查询
-        /// </summary>
-        /// <param name="employeeIQ"></param>
-        /// <param name="searchString"></param>
-        /// <returns></returns>
-        private IQueryable<Employee> SearchEmployee(IQueryable<Employee> employeeIQ, string searchString)
-        {
-            return employeeIQ.Where(item => item.Id.ToString().Equals(searchString) || item.FirstName.Contains(searchString) || item.LastName.Contains(searchString));
-        }
-
-        /// <summary>
-        /// 排序
-        /// </summary>
-        /// <param name="employeeIQ"></param>
-        /// <param name="orderByString"></param>
-        /// <returns></returns>
-        private IQueryable<Employee> OrderByEmployee(IQueryable<Employee> employeeIQ, string orderByString, string orderByType)
-        {
-            Expression<Func<Employee, object>> sortExpression;
-            switch (orderByString)
-            {
-                // var sortExpression = item.id
-                // if desc orderbydesc asc orderbyasc 
-                case "Id": sortExpression = item => item.Id;  break;
-                case "FirstName": sortExpression = item => item.FirstName; break;
-                case "LastName": sortExpression = item => item.LastName; break;
-                case "Gender": sortExpression = item => item.Gender; break;
-                case "Birth": sortExpression = item => item.Birth; break;
-                case "Address": sortExpression = item => item.Address; break;
-                case "Phone": sortExpression = item => item.Phone; break;
-                case "Email": sortExpression = item => item.Email; break;
-                case "Department": sortExpression = item => item.Department; break;
-                default: sortExpression = item => item.Id; break;
-            }
-            if("reversed".Equals(orderByType))
-            {
-                employeeIQ = employeeIQ.OrderByDescending(sortExpression);
-            }
-            else
-            {
-                employeeIQ = employeeIQ.OrderBy(sortExpression);
-            }
-            return employeeIQ;
         }
     }
 }

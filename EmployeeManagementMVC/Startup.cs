@@ -42,7 +42,6 @@ namespace EmployeeManagementMVC
             });
 
 
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddMvc(options =>

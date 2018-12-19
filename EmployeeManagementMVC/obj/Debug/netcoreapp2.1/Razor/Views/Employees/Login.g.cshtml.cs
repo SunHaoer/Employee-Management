@@ -65,7 +65,7 @@ using EmployeeManagementMVC.Models;
             WriteLiteral("\r\n<h2>Index</h2>\r\n\r\n");
             EndContext();
             BeginContext(122, 301, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("form", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "7734b02b9884461ca2d497e95854f8b6", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("form", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "433ffb0ee40e421094b93759855a7cc0", async() => {
                 BeginContext(174, 242, true);
                 WriteLiteral("\r\n    <p>\r\n        Username(FirstName): <input type=\"text\" name=\"username\">\r\n    </p>\r\n    <p>\r\n        Password(LastName): <input type=\"password\" name=\"password\">\r\n    </p>\r\n    <p>\r\n        <input type=\"submit\" value=\"Submit\" />\r\n    </p>\r\n");
                 EndContext();
