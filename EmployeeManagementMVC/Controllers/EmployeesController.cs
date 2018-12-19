@@ -6,17 +6,22 @@ using Microsoft.EntityFrameworkCore;
 using EmployeeManagementMVC.Models;
 using EmployeeManagementMVC.utils;
 using Microsoft.AspNetCore.Http;
+using System.Configuration;
 using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Protocols;
 
 namespace EmployeeManagementMVC.Controllers
 {
     public class EmployeesController : Controller
     {
         private readonly EmployeeManagementMVCContext _context;
+        public IConfiguration Configuration { get; }
 
-        public EmployeesController(EmployeeManagementMVCContext context)
+        public EmployeesController(EmployeeManagementMVCContext context, IConfiguration configuration)
         {
             _context = context;
+            Configuration = configuration;
         }
 
         /// <summary>
@@ -97,11 +102,8 @@ namespace EmployeeManagementMVC.Controllers
                 }
                 */
                 // 分页
-                int pageSize = 2;
-                /*
-                PaginatedList<Employee> paginatedList = PaginatedList<Employee>.Create(
-                   resultList, pageIndex ?? 1, pageSize);
-                */
+
+                int pageSize = Configuration.GetSection("Constant").GetValue<int>("PageSize"); 
                 PaginatedList<Employee> paginatedList = await PaginatedList<Employee>.CreateAsync(employeeIQ, pageIndex ?? 1, pageSize);
                 EmployeeIndexModel employeeIndexModel = new EmployeeIndexModel(username, pageSize, orderByString, searchString, sortType, paginatedList);
                 return View(employeeIndexModel);
