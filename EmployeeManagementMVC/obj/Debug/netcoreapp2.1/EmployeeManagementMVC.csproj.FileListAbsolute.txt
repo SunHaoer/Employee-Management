@@ -37,3 +37,4 @@ C:\Users\dillon.sun\source\repos\EmployeeManagementMVC\obj\Debug\netcoreapp2.1\R
 C:\Users\dillon.sun\source\repos\EmployeeManagementMVC\obj\Debug\netcoreapp2.1\Razor\Views\Employees\Edit.g.cshtml.cs
 C:\Users\dillon.sun\source\repos\EmployeeManagementMVC\obj\Debug\netcoreapp2.1\Razor\Views\Employees\Index.g.cshtml.cs
 C:\Users\dillon.sun\source\repos\EmployeeManagementMVC\obj\Debug\netcoreapp2.1\Razor\Views\Employees\Login.g.cshtml.cs
+C:\Users\dillon.sun\source\repos\EmployeeManagementMVC\obj\Debug\netcoreapp2.1\Razor\Views\EmployeesLogin\Login.g.cshtml.cs

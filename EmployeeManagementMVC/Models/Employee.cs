@@ -32,7 +32,7 @@ namespace EmployeeManagementMVC.Models
         public long Phone { set; get; }
         
         [RegularExpression(@"^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$", ErrorMessage = "抱歉，请填写正确Email地址")]
-        [Remote(action: "Verify", controller: "Employees", AdditionalFields = nameof(Id) + "," + nameof(Email))]
+        [Remote(action: "VerifyEmail", controller: "EmployeesVerify", AdditionalFields = "Id")]
         public string Email { set; get; }
 
         [StringLength(30)]

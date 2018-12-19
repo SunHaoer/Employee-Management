@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using EmployeeManagementMVC.Models;
+using EmployeeManagementMVC.Filter;
 
 namespace EmployeeManagementMVC
 {
@@ -44,6 +45,11 @@ namespace EmployeeManagementMVC
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(typeof(LoginFilter));
+            });
+
             services.AddDbContext<EmployeeManagementMVCContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("EmployeeManagementMVCContext")));
         }
@@ -71,7 +77,7 @@ namespace EmployeeManagementMVC
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Employees}/{action=Login}");
+                    template: "{controller=EmployeesLogin}/{action=Login}");
             });
             /*
                         app.UseMvc(routes =>

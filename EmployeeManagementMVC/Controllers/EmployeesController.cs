@@ -25,46 +25,6 @@ namespace EmployeeManagementMVC.Controllers
         }
 
         /// <summary>
-        /// 登录
-        /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        public IActionResult Login(string username, string password)
-        {
-            if(!String.IsNullOrEmpty(username) && !String.IsNullOrEmpty(password))
-            {
-                IQueryable<Employee> employeeIQ = _context.Employee;
-                bool isLegal = employeeIQ.Any(item => item.FirstName.Equals(username) && item.LastName.Equals(password));
-                if(isLegal)
-                {    // 登录成功
-                    HttpContext.Session.SetString("loginUsername", username);
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    return View(nameof(Login));
-                }
-            }
-            else
-            {
-                return View(nameof(Login));
-            }
-        }
-
-        /// <summary>
-        /// 登出
-        /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        public IActionResult Logout(string username, string password)
-        {
-            HttpContext.Session.Remove("loginUsername");
-            return View(nameof(Login));
-        }
-
-        /// <summary>
         /// 查询排序分页
         /// </summary>
         /// <param name="searchString"></param>
@@ -74,40 +34,34 @@ namespace EmployeeManagementMVC.Controllers
         // GET: Employees
         public async Task<IActionResult> Index(string searchString, string orderByString, int? pageIndex, string username, string sortType)
         {
-            if (IsNotLogin())
+            username = HttpContext.Session.GetString("loginUsername");
+            IQueryable<Employee> employeeIQ = _context.Employee;
+            // 查询
+            if (!string.IsNullOrEmpty(searchString))
             {
-                return View(nameof(Login));
+                employeeIQ = SearchEmployee(employeeIQ, searchString.Trim());
             }
-            else
+            // 排序
+            if (!string.IsNullOrEmpty(orderByString))
             {
-                username = HttpContext.Session.GetString("loginUsername");
-                IQueryable<Employee> employeeIQ = _context.Employee;
-                // 查询
-                if (!string.IsNullOrEmpty(searchString))
-                {
-                    employeeIQ = SearchEmployee(employeeIQ, searchString.Trim());
-                }
-                // 排序
-                if (!string.IsNullOrEmpty(orderByString))
-                {
-                    employeeIQ = OrderByEmployee(employeeIQ, orderByString);
-                }
-                /*
-                List<Employee> resultList = employeeIQ.ToList();
-                // 倒序
-                if ("reversed".Equals(sortType))
-                {
-                    resultList.Reverse();
-                    //employeeIQ = employeeIQ.Reverse();
-                }
-                */
-                // 分页
+                employeeIQ = OrderByEmployee(employeeIQ, orderByString);
+            }
+            /*
+            List<Employee> resultList = employeeIQ.ToList();
+            // 倒序
+            if ("reversed".Equals(sortType))
+            {
+                resultList.Reverse();
+                //employeeIQ = employeeIQ.Reverse();
+            }
+            */
+            // 分页
 
-                int pageSize = Configuration.GetSection("Constant").GetValue<int>("PageSize"); 
-                PaginatedList<Employee> paginatedList = await PaginatedList<Employee>.CreateAsync(employeeIQ, pageIndex ?? 1, pageSize);
-                EmployeeIndexModel employeeIndexModel = new EmployeeIndexModel(username, pageSize, orderByString, searchString, sortType, paginatedList);
-                return View(employeeIndexModel);
-            }
+            int pageSize = Configuration.GetSection("Constant").GetValue<int>("PageSize");
+            PaginatedList<Employee> paginatedList = await PaginatedList<Employee>.CreateAsync(employeeIQ, pageIndex ?? 1, pageSize);
+            EmployeeIndexModel employeeIndexModel = new EmployeeIndexModel(username, pageSize, orderByString, searchString, sortType, paginatedList);
+            return View(employeeIndexModel);
+
         }
 
         /// <summary>
@@ -118,27 +72,19 @@ namespace EmployeeManagementMVC.Controllers
         // GET: Employees/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (IsNotLogin())
+            if (id == null)
             {
-                return View(nameof(Login));
-            }
-            else
-            {
-                if (id == null)
-                {
-                    return NotFound();
-                }
-
-                var employee = await _context.Employee
-                    .FirstOrDefaultAsync(m => m.Id == id);
-                if (employee == null)
-                {
-                    return NotFound();
-                }
-
-                return View(employee);
+                return NotFound();
             }
 
+            var employee = await _context.Employee
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            return View(employee);
         }
 
         /// <summary>
@@ -150,7 +96,7 @@ namespace EmployeeManagementMVC.Controllers
         {
             if (IsNotLogin())
             {
-                return View(nameof(Login));
+                return RedirectToAction("Login", "EmployeesLogin");
             }
             else
             {
@@ -170,20 +116,13 @@ namespace EmployeeManagementMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Gender,Birth,Address,Phone,Email,Department")] Employee employee)
         {
-            if (IsNotLogin())
+            if (ModelState.IsValid)
             {
-                return View(nameof(Login));
+                _context.Add(employee);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
             }
-            else
-            {
-                if (ModelState.IsValid)
-                {
-                    _context.Add(employee);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-                return View(employee);
-            }
+            return View(employee);
         }
 
         /// <summary>
@@ -194,24 +133,19 @@ namespace EmployeeManagementMVC.Controllers
         // GET: Employees/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (IsNotLogin())
-            {
-                return View(nameof(Login));
-            }
-            else
-            {
-                if (id == null)
-                {
-                    return NotFound();
-                }
 
-                var employee = await _context.Employee.FindAsync(id);
-                if (employee == null)
-                {
-                    return NotFound();
-                }
-                return View(employee);
+            if (id == null)
+            {
+                return NotFound();
             }
+
+            var employee = await _context.Employee.FindAsync(id);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            return View(employee);
+
 
         }
 
@@ -228,41 +162,36 @@ namespace EmployeeManagementMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Gender,Birth,Address,Phone,Email,Department")] Employee employee)
         {
-            if (IsNotLogin())
-            {
-                return View(nameof(Login));
-            }
-            else
-            {
-                //int a = employee.Id;
-                Employee tempEmployee = employee;
-                if (id != employee.Id)
-                {
-                    return NotFound();
-                }
 
-                if (ModelState.IsValid)
-                {
-                    try
-                    {
-                        _context.Update(employee);
-                        await _context.SaveChangesAsync();
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        if (!EmployeeExists(employee.Id))
-                        {
-                            return NotFound();
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                    return RedirectToAction(nameof(Index));
-                }
-                return View(employee);
+
+            //int a = employee.Id;
+            Employee tempEmployee = employee;
+            if (id != employee.Id)
+            {
+                return NotFound();
             }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(employee);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!EmployeeExists(employee.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Index");
+            }
+            return View(employee);
 
         }
 
@@ -274,26 +203,21 @@ namespace EmployeeManagementMVC.Controllers
         // GET: Employees/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (IsNotLogin())
-            {
-                return View(nameof(Login));
-            }
-            else
-            {
-                if (id == null)
-                {
-                    return NotFound();
-                }
 
-                var employee = await _context.Employee
-                    .FirstOrDefaultAsync(m => m.Id == id);
-                if (employee == null)
-                {
-                    return NotFound();
-                }
-
-                return View(employee);
+            if (id == null)
+            {
+                return NotFound();
             }
+
+            var employee = await _context.Employee
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            return View(employee);
+
 
         }
 
@@ -307,33 +231,15 @@ namespace EmployeeManagementMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (IsNotLogin())
-            {
-                return View(nameof(Login));
-            }
-            else
-            {
-                var employee = await _context.Employee.FindAsync(id);
-                _context.Employee.Remove(employee);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+
+            var employee = await _context.Employee.FindAsync(id);
+            _context.Employee.Remove(employee);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+
         }
 
-        /// <summary>
-        /// 远程校验邮箱
-        /// </summary>
-        /// <param name="email"></param>
-        /// <returns></returns>
-        [AcceptVerbs("Get", "Post")]
-        public IActionResult Verify(int id, string email)
-        {
-            if (IsEmailExist(id, email))    // create时id为0
-            {
-                return Json($"Email {email} is already in use.");
-            }
-            return Json(true);
-        }
+
 
         /// <summary>
         /// 判断该employee是否存在
@@ -390,15 +296,6 @@ namespace EmployeeManagementMVC.Controllers
             return employeeIQ;
         }
 
-        /// <summary>
-        /// 验证邮箱是否存在
-        /// </summary>
-        /// <param name="email"></param>
-        /// <returns></returns>
-        private bool IsEmailExist(int id, string email)
-        {
-            IQueryable<Employee> employeeIQ = _context.Employee;
-            return employeeIQ.Any(item => item.Email.Equals(email) && !item.Id.Equals(id));
-        }
+
     }
 }
