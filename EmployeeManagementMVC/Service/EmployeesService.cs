@@ -13,6 +13,8 @@ namespace EmployeeManagementMVC.Service
     public class EmployeesService
     {
         private readonly EmployeeManagementMVCContext _context;
+        private IQueryable<Employee> EmployeeIQ;
+
         private IConfiguration Configuration { get; }
         private Dictionary<string, Expression<Func<Employee, object>>> OrderByDictionary;
 
@@ -20,6 +22,7 @@ namespace EmployeeManagementMVC.Service
         {
             _context = context;
             Configuration = configuration;
+            EmployeeIQ = _context.Employee;
             OrderByDictionary = InitOrderByDictionary(OrderByDictionary);
         }
 
@@ -29,9 +32,9 @@ namespace EmployeeManagementMVC.Service
         /// <param name="employeeIQ"></param>
         /// <param name="searchString"></param>
         /// <returns></returns>
-        public IQueryable<Employee> SearchEmployee(IQueryable<Employee> employeeIQ, string searchString)
+        public IQueryable<Employee> SearchEmployee(string searchString)
         {
-            return employeeIQ.Where(item => item.Id.ToString().Equals(searchString) || item.FirstName.Contains(searchString) || item.LastName.Contains(searchString));
+            return EmployeeIQ.Where(item => item.Id.ToString().Equals(searchString) || item.FirstName.Contains(searchString) || item.LastName.Contains(searchString));
         }
 
         /// <summary>
@@ -40,19 +43,19 @@ namespace EmployeeManagementMVC.Service
         /// <param name="employeeIQ"></param>
         /// <param name="orderByString"></param>
         /// <returns></returns>
-        public IQueryable<Employee> OrderByEmployee(IQueryable<Employee> employeeIQ, string orderByString, string orderByType)
+        public IQueryable<Employee> OrderByEmployee(string orderByString, string orderByType)
         {
             orderByString = (string.IsNullOrEmpty(orderByString) ? "Id" : orderByString); 
             Expression<Func<Employee, object>> sortExpression = OrderByDictionary.GetValueOrDefault(orderByString);
             if ("reversed".Equals(orderByType))
             {
-                employeeIQ = employeeIQ.OrderByDescending(sortExpression);
+                EmployeeIQ = EmployeeIQ.OrderByDescending(sortExpression);
             }
             else
             {
-                employeeIQ = employeeIQ.OrderBy(sortExpression);
+                EmployeeIQ = EmployeeIQ.OrderBy(sortExpression);
             }
-            return employeeIQ;
+            return EmployeeIQ;
         }
 
         /// <summary>
@@ -65,10 +68,10 @@ namespace EmployeeManagementMVC.Service
         /// <param name="searchString"></param>
         /// <param name="orderByType"></param>
         /// <returns></returns>
-        public async Task<EmployeeIndexViewModel> GetEmployeeIndexModelAsync(IQueryable<Employee> employeeIQ, int? pageIndex, string username, string orderByString, string searchString, string orderByType)
+        public async Task<EmployeeIndexViewModel> GetEmployeeIndexModelAsync(int? pageIndex, string username, string orderByString, string searchString, string orderByType)
         {
             int pageSize = Configuration.GetSection("Constant").GetValue<int>("PageSize");
-            PaginatedList<Employee> paginatedList = await PaginatedList<Employee>.CreateAsync(employeeIQ, pageIndex ?? 1, pageSize);
+            PaginatedList<Employee> paginatedList = await PaginatedList<Employee>.CreateAsync(EmployeeIQ, pageIndex ?? 1, pageSize);
             EmployeeIndexViewModel employeeIndexModel = new EmployeeIndexViewModel(username, pageSize, orderByString, searchString, orderByType, paginatedList);
             return employeeIndexModel;
         }
@@ -80,7 +83,7 @@ namespace EmployeeManagementMVC.Service
         /// <returns></returns>
         public async Task<Employee> FindEmployeeByIdAsync(int? id)
         {
-            return await _context.Employee.FirstOrDefaultAsync(item => item.Id == id);
+            return await EmployeeIQ.FirstOrDefaultAsync(item => item.Id == id);
         }
 
         /// <summary>
@@ -161,7 +164,7 @@ namespace EmployeeManagementMVC.Service
         /// <returns></returns>
         private bool EmployeeExists(int id)
         {
-            return _context.Employee.Any(item => item.Id == id);
+            return EmployeeIQ.Any(item => item.Id == id);
         }
     }
 }

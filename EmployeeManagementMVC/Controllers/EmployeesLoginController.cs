@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using EmployeeManagementMVC.Models;
+using EmployeeManagementMVC.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,10 +9,14 @@ namespace EmployeeManagementMVC.Controllers
     public class EmployeesLoginController : Controller
     {
         private readonly EmployeeManagementMVCContext _context;
+        private readonly IQueryable<Employee> EmployeeIQ;
+        private readonly EmployeesLoginService EmployeesLoginService;
 
         public EmployeesLoginController(EmployeeManagementMVCContext context)
         {
             _context = context;
+            EmployeeIQ = _context.Employee;
+            EmployeesLoginService = new EmployeesLoginService(EmployeeIQ);
         }
 
         /// <summary>
@@ -23,10 +28,8 @@ namespace EmployeeManagementMVC.Controllers
         public IActionResult Login(string username, string password)
         {
             if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
-            {
-                IQueryable<Employee> employeeIQ = _context.Employee;
-                bool isLegal = employeeIQ.Any(item => item.FirstName.Equals(username) && item.LastName.Equals(password));
-                if (isLegal)
+            {   
+                if (EmployeesLoginService.IslegalLogin(username, password))
                 {    // 登录成功
                     HttpContext.Session.SetString("loginUsername", username);
                     return RedirectToAction("Index", "Employees");

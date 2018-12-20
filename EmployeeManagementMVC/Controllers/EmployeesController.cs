@@ -13,11 +13,13 @@ namespace EmployeeManagementMVC.Controllers
         private readonly EmployeeManagementMVCContext _context;
         private IConfiguration Configuration { get; }
         private EmployeesService EmployeesService; 
+        private IQueryable<Employee> EmployeeIQ;
 
         public EmployeesController(EmployeeManagementMVCContext context, IConfiguration configuration)
         {
             _context = context;
             Configuration = configuration;
+            EmployeeIQ = _context.Employee;
             EmployeesService = new EmployeesService(_context, Configuration);
         }
 
@@ -32,18 +34,18 @@ namespace EmployeeManagementMVC.Controllers
         public async Task<IActionResult> Index(string searchString, string orderByString, int? pageIndex, string username, string orderByType)
         {
             username = HttpContext.Session.GetString("loginUsername");
-            IQueryable<Employee> employeeIQ = _context.Employee;
+            //IQueryable<Employee> employeeIQ = _context.Employee;
             // 查询
             if (!string.IsNullOrEmpty(searchString))
             {
-                employeeIQ = EmployeesService.SearchEmployee(employeeIQ, searchString.Trim());
+                EmployeeIQ = EmployeesService.SearchEmployee(searchString.Trim());
             }
             // 排序
             if (!string.IsNullOrEmpty(orderByString))
             {
-                employeeIQ = EmployeesService.OrderByEmployee(employeeIQ, orderByString, orderByType);
+                EmployeeIQ = EmployeesService.OrderByEmployee(orderByString, orderByType);
             }
-            EmployeeIndexViewModel employeeIndexModel = await EmployeesService.GetEmployeeIndexModelAsync(employeeIQ, pageIndex, username, orderByString, searchString, orderByType);
+            EmployeeIndexViewModel employeeIndexModel = await EmployeesService.GetEmployeeIndexModelAsync(pageIndex, username, orderByString, searchString, orderByType);
             return View(employeeIndexModel);
         }
 
