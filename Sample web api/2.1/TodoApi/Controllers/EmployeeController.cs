@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TodoApi.Models;
 
 #region EmployeeController
@@ -51,7 +52,7 @@ namespace EmployeeApi.Controllers
         [HttpPost]
         public ActionResult Create(EmployeeItem item)
         {
-            if(IsLegal(item))
+            if(!IsLegal(item))
             {
                 return CreatedAtRoute("GetEmployee", 1);
             }
@@ -64,8 +65,9 @@ namespace EmployeeApi.Controllers
 
         private bool IsLegal(EmployeeItem item)
         {
-            return  _context.EmployeeItems.Any(e => e.Email.Equals(item.Email) && e.Id != item.Id);
+            return ValidatePhone(item.Phone) && ValidateEmail(item.Email) && !IsEmailExist(item);
         }
+
 
         #region snippet_Update
         [HttpPut("{id}")]
@@ -108,5 +110,22 @@ namespace EmployeeApi.Controllers
             return NoContent();
         }
         #endregion
+
+        private bool ValidatePhone(long phone)
+        {
+            string regex = @"^[1]\d{10,10}$";
+            return Regex.IsMatch(phone.ToString(), regex);
+        }
+
+        private bool ValidateEmail(string email)
+        {
+            string regex = "^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$";
+            return Regex.IsMatch(email, regex);
+        }
+
+        private bool IsEmailExist(EmployeeItem item)
+        {
+            return _context.EmployeeItems.Any(e => e.Email.Equals(item.Email) && e.Id != item.Id);
+        }
     }
 }

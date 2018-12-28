@@ -55,7 +55,7 @@
         </select>
         <input type="date" id="add-birth" placeholder="Birth" required>
         <input type="text" id="add-address" placeholder="Address" required >
-        <input type="number" id="add-phone" placeholder="Phone" required >
+        <input type="number" id="add-phone" placeholder="Phone" required onblur="ValidatePhone('add')" >
         <input type="email" id="add-email" placeholder="Email" required>
         
         <!--<input type="text" id="add-department" placeholder="Department" required>-->
@@ -69,19 +69,19 @@
 
     <div id="spoiler">
         <h3>Edit</h3>
-        <form class="my-form">
-            <input type="hidden" id="edit-id">
-            <input type="text" id="edit-firstname">
-            <input type="text" id="edit-lastname">
-            <select id="edit-gender" placeholder="Gender">
+        <form action="javascript:void(0);" method="PUT" onsubmit="saveItem()">
+            <input type="hidden" id="edit-id" required>
+            <input type="text" id="edit-firstname" required>
+            <input type="text" id="edit-lastname" required>
+            <select id="edit-gender" placeholder="Gender" required>
                 <option value="M" selected="selected">MALE</option>
                 <option value="F">FEMALE</option>
             </select>
-            <input type="date" id="edit-birth">
-            <input type="email" id="edit-email">
-            <input type="text" id="edit-address">
-            <input type="number" id="edit-phone">
-            <select id="edit-department" placeholder="Department">
+            <input type="date" id="edit-birth" required>
+            <input type="email" id="edit-email" required>
+            <input type="text" id="edit-address" required>
+            <input type="number" id="edit-phone" required onblur="ValidatePhone('edit')">
+            <select id="edit-department" placeholder="Department" required>
                 <option value="Develop" selected="selected">Develop</option>
                 <option value="Test">Test</option>
                 <option value="Manage">Manage</option>
