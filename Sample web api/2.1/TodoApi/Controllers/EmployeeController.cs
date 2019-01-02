@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,9 +53,10 @@ namespace EmployeeApi.Controllers
         [HttpPost]
         public ActionResult Create(EmployeeItem item)
         {
+            //HttpContext.Response.WriteAsync("haha");
             if(!IsLegal(item))
             {
-                return CreatedAtRoute("GetEmployee", 1);
+                return CreatedAtRoute("message", "信息不合法");
             }
             _context.EmployeeItems.Add(item);
             _context.SaveChanges();
@@ -77,6 +79,11 @@ namespace EmployeeApi.Controllers
             if (Employee == null)
             {
                 return NotFound();
+            }
+
+            if (!IsLegal(item))
+            {
+                return CreatedAtRoute("message", "信息不合法");
             }
 
             Employee.Id = item.Id;

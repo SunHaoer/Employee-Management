@@ -13,8 +13,6 @@
 
     <script src="site.js"></script>
 
-
-
     <style>
         input[type='submit'], button, [aria-label] {
             cursor: pointer;
@@ -54,10 +52,9 @@
             <option value="F">FEMALE</option>
         </select>
         <input type="date" id="add-birth" placeholder="Birth" required>
-        <input type="text" id="add-address" placeholder="Address" required >
-        <input type="number" id="add-phone" placeholder="Phone" required onblur="ValidatePhone('add')" >
-        <input type="email" id="add-email" placeholder="Email" required>
-        
+        <input type="email" id="add-email" placeholder="Email" required onblur="validateEmail('add')">
+        <input type="text" id="add-address" placeholder="Address" required>
+        <input type="number" id="add-phone" placeholder="Phone" required onblur="validatePhone('add')">
         <!--<input type="text" id="add-department" placeholder="Department" required>-->
         <select id="add-department" placeholder="Department" required>
             <option value="Develop" selected="selected">Develop</option>
@@ -70,17 +67,17 @@
     <div id="spoiler">
         <h3>Edit</h3>
         <form action="javascript:void(0);" method="PUT" onsubmit="saveItem()">
-            <input type="hidden" id="edit-id" required>
-            <input type="text" id="edit-firstname" required>
-            <input type="text" id="edit-lastname" required>
+            <input type="hidden" id="edit-id" required disabled>
+            <input type="text" id="edit-firstname" required disabled>
+            <input type="text" id="edit-lastname" required disabled>
             <select id="edit-gender" placeholder="Gender" required>
                 <option value="M" selected="selected">MALE</option>
                 <option value="F">FEMALE</option>
             </select>
             <input type="date" id="edit-birth" required>
-            <input type="email" id="edit-email" required>
+            <input type="email" id="edit-email" required onblur="validateEmail('edit')">
             <input type="text" id="edit-address" required>
-            <input type="number" id="edit-phone" required onblur="ValidatePhone('edit')">
+            <input type="number" id="edit-phone" required onblur="validatePhone('edit')">
             <select id="edit-department" placeholder="Department" required>
                 <option value="Develop" selected="selected">Develop</option>
                 <option value="Test">Test</option>
@@ -90,6 +87,10 @@
             <a onclick="closeInput()" aria-label="Close">&#10006;</a>
         </form>
     </div>
+
+    <span id="emailError"></span>
+    <span id="phoneError"></span>
+
     <p id="counter"></p>
     <table id="myTable">
         <thead>
